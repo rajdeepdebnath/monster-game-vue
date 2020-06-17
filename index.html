@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monster Slayer</title>
+    <script src="https://npmcdn.com/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="css/foundation.min.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="app">
+    <section class="row">
+        <div class="small-6 columns">
+            <h1 class="text-center">YOU</h1>
+            <div class="healthbar">
+                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;" :style="{width:you+'%'}">
+					{{ you }}
+                </div>
+            </div>
+        </div>
+        <div class="small-6 columns">
+            <h1 class="text-center">MONSTER</h1>
+            <div class="healthbar">
+                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;" :style="{width:monster+'%'}">
+					{{ monster }}
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="row controls">
+        <div class="small-12 columns">
+            <button id="start-game" @click="startGame" v-if="!isStartGame">START NEW GAME</button>
+        </div>
+    </section>
+    <section class="row controls" v-if="isStartGame">
+        <div class="small-12 columns">
+            <button id="attack" @click="attack">ATTACK</button>
+            <button id="special-attack" @click="specialAttack">SPECIAL ATTACK</button>
+            <button id="heal" @click="heal">HEAL</button>
+            <button id="give-up" @click="giveUp">GIVE UP</button>
+        </div>
+    </section>
+    <section class="row log">
+        <div class="small-12 columns">
+            <ul>
+                <li v-for="(hitObj,i) in hitArray">
+						<div style="background-color:red;" v-if="i%2==0">{{ hitObj }}</div>
+						<div style="background-color:green;" v-if="i%2!=0">{{ hitObj }}</div>
+                </li>
+            </ul>
+        </div>
+    </section>
+</div>
+<script>
+new Vue({
+	el:'#app',
+	data:{
+		isStartGame:false,
+		you:100,
+		monster:100,
+		hitArray:[],
+	},
+	watch:{
+		you:function(value){
+			if(value < 0){
+				alert("Monster win!!!");
+				this.giveUp();
+			}
+		},
+		monster:function(value){
+			if(value < 0){
+				alert("You win!!!");
+				this.giveUp();
+			}
+		},
+	},
+	methods:{
+		startGame:function(){
+			this.isStartGame = true;
+		},
+		attack:function(){
+			var yourHit = Math.floor(Math.random() * 10);
+			var monsterHit = Math.floor(Math.random() * 10);
+			
+			this.you -= monsterHit; 
+			
+			this.monster -= yourHit; 
+			
+			this.hitArray.push(`MONSTER HITS PALYER FOR ${monsterHit}`);
+			this.hitArray.push(`PLAYER HITS MONSTER FOR ${yourHit}`);
+		},
+		specialAttack:function(){
+			var yourHit = Math.floor(Math.random() * 10);
+			var monsterHit = Math.floor(Math.random() * 10);
+			
+			this.you -= monsterHit; 
+			
+			this.monster -= yourHit; 
+			
+			this.hitArray.push(`MONSTER HITS PALYER FOR ${monsterHit}`);
+			this.hitArray.push(`PLAYER HITS MONSTER FOR ${yourHit}`);
+		},
+		heal:function(){
+			var yourHit = Math.floor(Math.random() * 10);
+			var monsterHit = Math.floor(Math.random() * 10);
+			
+			this.you += yourHit; 
+			
+			this.you -= monsterHit; 
+			
+			this.hitArray.push(`MONSTER HITS PALYER FOR ${monsterHit}`);
+			this.hitArray.push(`PLAYER HEALS HIMSELF FOR ${yourHit}`);
+		},
+		giveUp:function(){
+			this.isStartGame = false;
+			this.hitArray = [];
+			this.you = 100;
+			this.monster = 100;
+		}
+	}
+})
+</script>
+</body>
+</html>
